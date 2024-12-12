@@ -100,11 +100,3 @@ async function myFunc(str) {
     result = await parseTB(str);
     return result;
 }
-
-const str = '/BhgP3wvEpZW/ MU918/\n' +
-    '❷王一博明星同款💰239‼️\n' +
-    '鸭鸭新山系系列羽绒服外套\n' +
-    '/j0n03wEgd5G/ MU918/'
-
-const result = await myFunc(str);
-console.log(result);
