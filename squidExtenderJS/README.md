@@ -11,7 +11,7 @@
    比如在旧版中是：
 ```js
 function main(str) {
-    return str.split('').reverse().join('');
+   return str.split('').reverse().join('');
 }
 ```
 在新版中需要改为：
@@ -31,9 +31,9 @@ async function main(str) {
 
 #### **编写过程与技巧**
 1. 如果有JavaScript或其他编程基础的可以手搓，没有基础的可以照猫画虎或借助GPT生成
-    * GPT提示词示例：`实现一个javascript的函数名为main的异步async函数，接收一个字符串参数，把接收到的字符串经过处理后返回。
+   * GPT提示词示例：`实现一个javascript的函数名为main的异步async函数，接收一个字符串参数，把接收到的字符串经过处理后返回。
 比如把接收的字符串经过以下处理，并返回。`
-    * 问GPT要把一个大问题分解成几个小问题，掰开了问，不然它只会胡说。一步步问，如果不确定的话，每步之后用console.log()来打印日志，看处理之后是不是你想要的
+   * 问GPT要把一个大问题分解成几个小问题，掰开了问，不然它只会胡说。一步步问，如果不确定的话，每步之后用console.log()来打印日志，看处理之后是不是你想要的
 2. 善用`console.log()`来打印变量并查看日志，[具体用法](#1-console)
 3. 编写过程：
 ```mermaid
@@ -113,7 +113,7 @@ async function main(str) {
 
 ##### 类型`type`可选项：
 
-> txt，~~app~~，url，urlInApp，js
+> txt，~~app~~，url，urlInApp，function，js
 
 1. `txt`：插入文本
 2. ~~`app`：打开应用。此时，content需要是某个应用的bundle identifier。比如：~~ 请使用打开url scheme代替。
@@ -137,19 +137,69 @@ async function main(str) {
     };
 }
 ```
-5. `js`：执行javascript脚本，content要求为js语句。比如：
+5. `function`：执行javascript中某个async异步函数方法，content要求为函数名，最终执行结果支持[函数返回值](#三main函数的返回值)中的全部类型。另外有一个可选字段args，类型为数组，可以传递该方法需要的参数。比如：
 ```js
-// 执行后将先复制str的内容到剪贴板，再打开备忘录。(其中用到的$pb，$url等方法，后面介绍)
+// 执行后将弹出菜单，选择某一项后，将插入处理后的文本插入到输入框。
+async function main(str) {
+	return [{
+		type: 'function',
+		content: 'myFunc1',
+	},
+	{
+		type: 'function',
+		content: 'myFunc2',
+		args: ['text1', 'text2'],
+	}];
+}
+
+async function myFunc1() {
+    const res = await httpGetFunction();
+    return `This is myFunc1: ${res}`;
+}
+
+async function myFunc2(arg1, arg2) {
+    const res = await httpGetFunction();
+    return `This is myFunc2: ${res}, ${arg1}, ${arg2}`;
+}
+
+async function httpGetFunction() {
+  const baseURL = "https://httpbin.org/get";
+
+  var headers = {
+      'content-type': 'application/json;charset=UTF-8'
+  }
+
+  const req = {
+      url: baseURL,
+      headers: headers
+  };
+  const result = await $http.get(req); // 因为$http.get为async异步函数，执行需要时间，所以需要await关键词修饰来等待返回
+  console.log("get result: type: " + typeof result + "\n" + result);
+
+  resultJson = JSON.parse(result); // 使用JSON.parse(string)来解析获取到的内容
+  console.log("get json: "+ resultJson);
+  const resultObj = resultJson.origin;
+  console.log("get some objects: "+ resultObj);
+
+  return resultObj;
+}
+```
+6. `js`(建议改用function，将来此类型可能会废弃)：执行javascript脚本，content要求为js语句。最终执行结果支持[函数返回值](#三main函数的返回值)中的全部类型。比如：
+```js
+// 执行后将先复制str的内容到剪贴板，再在当前应用中Bing，最后插入处理后的文本插入到输入框。(其中用到的$pb，$url等方法，后面介绍)
 async function main(str) {
     return {
       type: 'js',
       content: `
 $pb.writeString("${str}");
 $url.openInApp("https://www.bing.com");
+"${str}" + " Processed";
 `,
     };
 }
 ```
+
+
 
 #### 4. 字典数组
 > 数组中只有一个字典元素时，将直接执行字典中定义的动作；否则，将弹出选择菜单，选择某一项后，执行该字典中定义的动作。
@@ -322,31 +372,31 @@ async function main(str) {
 ```js
 // get请求示例
 async function main(str) {
-  const x = await myFunc(); // 因为myFunc为async异步函数，需要await关键词修饰来等待返回
-  console.log("return result: "+ x);
-  return x;
+   const x = await myFunc(); // 因为myFunc为async异步函数，需要await关键词修饰来等待返回
+   console.log("return result: "+ x);
+   return x;
 }
 
 async function myFunc() {
-  const baseURL = "https://httpbin.org/get";
+   const baseURL = "https://httpbin.org/get";
 
-  var headers = {
+   var headers = {
       'content-type': 'application/json;charset=UTF-8'
-  }
+   }
 
-  const req = {
+   const req = {
       url: baseURL,
       headers: headers
-  };
-  const result = await $http.get(req); // 因为$http.get为async异步函数，执行需要时间，所以需要await关键词修饰来等待返回
-  console.log("get result: type: " + typeof result + "\n" + result);
+   };
+   const result = await $http.get(req); // 因为$http.get为async异步函数，执行需要时间，所以需要await关键词修饰来等待返回
+   console.log("get result: type: " + typeof result + "\n" + result);
 
-  resultJson = JSON.parse(result); // 使用JSON.parse(string)来解析获取到的内容
-  console.log("get json: "+ resultJson);
-  const resultObj = resultJson.origin;
-  console.log("get some objects: "+ resultObj);
+   resultJson = JSON.parse(result); // 使用JSON.parse(string)来解析获取到的内容
+   console.log("get json: "+ resultJson);
+   const resultObj = resultJson.origin;
+   console.log("get some objects: "+ resultObj);
 
-  return resultObj;
+   return resultObj;
 }
 ```
 
@@ -355,38 +405,38 @@ async function myFunc() {
 ```js
 // post请求示例
 async function main(str) {
-  const x = await myFunc(); // 因为myFunc为async异步函数，需要await关键词修饰来等待返回
-  console.log("return result: "+ x);
-  return x;
+   const x = await myFunc(); // 因为myFunc为async异步函数，需要await关键词修饰来等待返回
+   console.log("return result: "+ x);
+   return x;
 }
 
 async function myFunc() {
-  const baseURL = "https://httpbin.org/post";
+   const baseURL = "https://httpbin.org/post";
 
-  var headers = {
+   var headers = {
       'content-type': 'application/json;charset=UTF-8'
-  }
+   }
 
-  const data = {
+   const data = {
       page_num: 1,
       page_size: 100,
       username: 'admin'
-  };
-  const req = {
+   };
+   const req = {
       url: baseURL,
       headers: headers,
       body: JSON.stringify(data)
-  };
-  const result = await $http.post(req); // 因为$http.get为async异步函数，执行需要时间，所以需要await关键词修饰来等待返回
-  console.log("get result: type: " + typeof result + "\n" + result);
+   };
+   const result = await $http.post(req); // 因为$http.get为async异步函数，执行需要时间，所以需要await关键词修饰来等待返回
+   console.log("get result: type: " + typeof result + "\n" + result);
 
-  resultJson = JSON.parse(result); // 使用JSON.parse(string)来解析获取到的内容
-  console.log("get json: "+ resultJson);
+   resultJson = JSON.parse(result); // 使用JSON.parse(string)来解析获取到的内容
+   console.log("get json: "+ resultJson);
 
-  const resultObj = resultJson.json.page_size;
-  console.log("get some objects: "+ resultObj);
+   const resultObj = resultJson.json.page_size;
+   console.log("get some objects: "+ resultObj);
 
-  return resultObj;
+   return resultObj;
 }
 ```
 
@@ -395,33 +445,33 @@ async function myFunc() {
 ```js
 // 根据输入框中文字或剪贴板中文字联网获取二维码图片，并自动粘贴示例
 async function main(str) {
-  if(str == "") {
-    str = $pb.readString();
-  }
-  const image = await getQR(str);
-  console.log("image: " + image);
-  $pb.writeImage(image);
-  $pb.paste();
+   if(str == "") {
+      str = $pb.readString();
+   }
+   const image = await getQR(str);
+   console.log("image: " + image);
+   $pb.writeImage(image);
+   $pb.paste();
 
-  return null;
+   return null;
 }
 
 async function getQR(str) {
-  const baseURL = "https://api.qrtool.cn/?text=" + str;
+   const baseURL = "https://api.qrtool.cn/?text=" + str;
 
-  var headers = {
+   var headers = {
       'accept': 'application/json;charset=UTF-8'
-  }
+   }
 
-  // 由于输入文字可能有中韩日文或标点等特殊字符，所以使用encodeURI()进行一次URL编码
-  const req = {
+   // 由于输入文字可能有中韩日文或标点等特殊字符，所以使用encodeURI()进行一次URL编码
+   const req = {
       url: encodeURI(baseURL),
       headers: headers
-  };
-  const result = await $http.get(req);
-  console.log("get result: "+ result);
+   };
+   const result = await $http.get(req);
+   console.log("get result: "+ result);
 
-  return result;
+   return result;
 }
 ```
 
@@ -432,8 +482,8 @@ async function getQR(str) {
 
 ```js
 async function main(str) {
-    const bullet = '-';
-    return `${bullet} ` + str.split(/\r?\n/).join(`\n${bullet} `);
+   const bullet = '-';
+   return `${bullet} ` + str.split(/\r?\n/).join(`\n${bullet} `);
 }
 ```
 
@@ -442,14 +492,14 @@ async function main(str) {
 
 ```js
 async function main(url) {
-  // 处理字符串，将 "raw.githubusercontent.com" 替换为 "github.com/blob"
-  const processedUrl = url.replace("raw.githubusercontent.com", "github.com/blob");
-  // 创建一个字符串数组
-  const urls = [];
-  // 将处理后的字符串添加到数组中
-  urls.push(processedUrl);
-  // 返回字符串数组
-  return urls;
+   // 处理字符串，将 "raw.githubusercontent.com" 替换为 "github.com/blob"
+   const processedUrl = url.replace("raw.githubusercontent.com", "github.com/blob");
+   // 创建一个字符串数组
+   const urls = [];
+   // 将处理后的字符串添加到数组中
+   urls.push(processedUrl);
+   // 返回字符串数组
+   return urls;
 }
 ```
 
@@ -458,14 +508,14 @@ async function main(url) {
 
 ```js
 async function main(str) {
-  // 创建一个字符串数组
-  const strs = [];
-  // 处理字符串，转换为大写
-  const processedStr = str.toUpperCase();
-  // 将处理后的字符串添加到数组中
-  strs.push(processedStr);
-  // 返回字符串数组
-  return strs;
+   // 创建一个字符串数组
+   const strs = [];
+   // 处理字符串，转换为大写
+   const processedStr = str.toUpperCase();
+   // 将处理后的字符串添加到数组中
+   strs.push(processedStr);
+   // 返回字符串数组
+   return strs;
 }
 ```
 #### 4. 去掉全部空格
@@ -473,14 +523,14 @@ async function main(str) {
 
 ```js
 async function main(str) {
-  // 创建一个字符串数组
-  const strs = [];
-  // 处理字符串，去除所有空格
-  const processedStr = str.replace(/\s/g, "");
-  // 将处理后的字符串添加到数组中
-  strs.push(processedStr);
-  // 返回字符串数组
-  return strs;
+   // 创建一个字符串数组
+   const strs = [];
+   // 处理字符串，去除所有空格
+   const processedStr = str.replace(/\s/g, "");
+   // 将处理后的字符串添加到数组中
+   strs.push(processedStr);
+   // 返回字符串数组
+   return strs;
 }
 ```
 
@@ -489,14 +539,14 @@ async function main(str) {
 
 ```js
 async function main(str) {
-  // 创建一个字符串数组
-  const strs = [];
-  // 处理字符串，去除首尾空格
-  const processedStr = str.trim();
-  // 将处理后的字符串添加到数组中
-  strs.push(processedStr);
-  // 返回字符串数组
-  return strs;
+   // 创建一个字符串数组
+   const strs = [];
+   // 处理字符串，去除首尾空格
+   const processedStr = str.trim();
+   // 将处理后的字符串添加到数组中
+   strs.push(processedStr);
+   // 返回字符串数组
+   return strs;
 }
 ```
 
@@ -505,11 +555,11 @@ async function main(str) {
 
 ```js
 async function main(text) {
-    // 使用正则表达式匹配并在中英字符、数字、标点和货币符号之间添加空格
-    return text.replace(/([\u4e00-\u9fa5])([a-zA-Z0-9¥$€£₹₩₽₺₨₦₫₴₭₲₡₣₤₱])/g, '$1 $2')
-      .replace(/([a-zA-Z0-9¥$€£₹₩₽₺₨₦₫₴₭₲₡₣₤₱])([\u4e00-\u9fa5])/g, '$1 $2')
-      .replace(/([\u4e00-\u9fa5])([,.!?;:¥$€£₹₩₽₺₨₦₫₴₭₲₡₣₤₱])/g, '$1$2')
-      .replace(/([,.!?;:¥$€£₹₩₽₺₨₦₫₴₭₲₡₣₤₱])([\u4e00-\u9fa5])/g, '$1 $2');
+   // 使用正则表达式匹配并在中英字符、数字、标点和货币符号之间添加空格
+   return text.replace(/([\u4e00-\u9fa5])([a-zA-Z0-9¥$€£₹₩₽₺₨₦₫₴₭₲₡₣₤₱])/g, '$1 $2')
+           .replace(/([a-zA-Z0-9¥$€£₹₩₽₺₨₦₫₴₭₲₡₣₤₱])([\u4e00-\u9fa5])/g, '$1 $2')
+           .replace(/([\u4e00-\u9fa5])([,.!?;:¥$€£₹₩₽₺₨₦₫₴₭₲₡₣₤₱])/g, '$1$2')
+           .replace(/([,.!?;:¥$€£₹₩₽₺₨₦₫₴₭₲₡₣₤₱])([\u4e00-\u9fa5])/g, '$1 $2');
 }
 ```
 
@@ -518,11 +568,11 @@ async function main(text) {
 
 ```js
 async function main(text) {
-    // 使用正则表达式匹配并删除 ^@.*: 部分
-    const regex = /^@.*?:/gm;
-    const cleanedText = text.replace(regex, '').trim();
+   // 使用正则表达式匹配并删除 ^@.*: 部分
+   const regex = /^@.*?:/gm;
+   const cleanedText = text.replace(regex, '').trim();
 
-    return cleanedText;
+   return cleanedText;
 }
 ```
 
@@ -531,16 +581,16 @@ async function main(text) {
 
 ```js
 async function main(text) {
-    const regex = /UID:(\d+)/g;
-    let match;
-    const results = [];
-    const prefix = "https://rsshub.app/bilibili/user/dynamic/";
+   const regex = /UID:(\d+)/g;
+   let match;
+   const results = [];
+   const prefix = "https://rsshub.app/bilibili/user/dynamic/";
 
-    while ((match = regex.exec(text)) !== null) {
-        results.push(prefix + match[1]);
-    }
+   while ((match = regex.exec(text)) !== null) {
+      results.push(prefix + match[1]);
+   }
 
-    return results.length === 1 ? results[0] : results;
+   return results.length === 1 ? results[0] : results;
 }
 ```
 
@@ -549,19 +599,19 @@ async function main(text) {
 
 ```js
 async function main(url) {
-    // 使用正则表达式提取国家代码和ID部分
-    const regex = /https:\/\/apps\.apple\.com\/([a-z]{2})\/app\/.*\/id(\d+)/;
-    const match = url.match(regex);
+   // 使用正则表达式提取国家代码和ID部分
+   const regex = /https:\/\/apps\.apple\.com\/([a-z]{2})\/app\/.*\/id(\d+)/;
+   const match = url.match(regex);
 
-    if (match) {
-        // 构建精简后的链接
-        const countryCode = match[1];
-        const appId = match[2];
-        const simplifiedUrl = `https://apps.apple.com/${countryCode}/app/id${appId}`;
-        return simplifiedUrl;
-    } else {
-        return "Invalid URL";
-    }
+   if (match) {
+      // 构建精简后的链接
+      const countryCode = match[1];
+      const appId = match[2];
+      const simplifiedUrl = `https://apps.apple.com/${countryCode}/app/id${appId}`;
+      return simplifiedUrl;
+   } else {
+      return "Invalid URL";
+   }
 }
 ```
 
@@ -570,10 +620,10 @@ async function main(url) {
 
 ```js
 function removeEmptyLines(text) {
-    return text.split('\n').filter(line => line.trim() !== '').join('\n');
+   return text.split('\n').filter(line => line.trim() !== '').join('\n');
 }
 
 async function main(text) {
-    return removeEmptyLines(text);
+   return removeEmptyLines(text);
 }
 ```
