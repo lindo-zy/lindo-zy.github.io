@@ -1,5 +1,22 @@
-// 假设传入str为com.apple.mobilenotes
-async function main(str) {
-    $app.open('com.apple.mobilenotes'); // 打开备忘录
-    return null;
+import $http from "./utils/httpUtils.js";
+
+async function main() {
+    const data = {
+        page_num: 1,
+        page_size: 100,
+        username: 'admin'
+    };
+    const request = {
+        url: 'https://httpbin.org/post',
+        headers: {
+            'content-type': 'application/json;charset=UTF-8'
+        },
+        body: JSON.stringify(data)
+    }
+    const result = await $http.post(request);
+    console.log(JSON.parse(result));
+    return result
 }
+
+const request = await main();
+console.log(JSON.parse(request));

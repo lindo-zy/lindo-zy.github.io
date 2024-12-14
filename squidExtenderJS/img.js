@@ -4,33 +4,26 @@ async function main(str) {
         //如果没有获取当前输入内容，就使用剪切板
         str = $pb.readString();
     }
-    // str = encodeURIComponent(str)
-
-    const apiList = [
-        {
-            title: '鲁迅话多图',
-            url: `https://api.andeer.top/API/img_luxun.php?text=${str}`
-        },
-        {
-            title: '小人举牌图',
-            url: `https://api.cenguigui.cn/api/jp/?msg=${str}`
-        },
-        {
-            title: '草稿纸图',
-            url: `https://api.cenguigui.cn/api/diy/?text=${str}`
-        },
-    ]
-
     const headers = {
         'content-type': 'application/json;charset=UTF-8'
     }
 
     const req = {
-        url: encodeURI(`https://api.cenguigui.cn/api/diy/?text=${str}`),
+        url: encodeURI(`https://api.andeer.top/API/img_nokia.php?data=${str}`),
         headers: headers
     };
     const result = await $http.get(req);
-    $pb.writeImage(result);
+
+    const imgUrl=JSON.parse(result);
+
+    const req2 = {
+        url: encodeURI(imgUrl.data),
+        headers: headers
+    };
+    const response=await $http.get(req2);
+
+    $pb.writeImage(response);
     $pb.paste();
+    return "";
 
 }
