@@ -5,14 +5,10 @@ async function main(str) {
     }
 
     return [{
-        type: 'function',
-        content: 'myFunc1',
-    },
-        {
-            type: 'function',
-            content: 'myFunc2',
-            args: ['text1', 'text2'],
-        }];
+        type: 'function', content: 'myFunc1',
+    }, {
+        type: 'function', content: 'myFunc2', args: ['text1', 'text2'],
+    }];
 }
 
 async function search() {
