@@ -1,0 +1,9 @@
+[submodule "lindo-zy/hugo-theme-stack"]
+	path = lindo-zy/hugo-theme-stack
+	url = git@github.com:lindo-zy/hugo-theme-stack.git
+[submodule "LoveIt"]
+	path = LoveIt
+	url = git@github.com:dillonzq/LoveIt.git
+[submodule "blog/themes/LoveIt"]
+	path = blog/themes/LoveIt
+	url = https://github.com/dillonzq/LoveIt.git
