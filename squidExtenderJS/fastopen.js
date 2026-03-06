@@ -5,11 +5,12 @@ async function main(str) {
         str = $pb.readString();
     }
     str = encodeURIComponent(str);
-    return [{
-        type: 'urlInApp',
-        title: '拼多多搜索',
-        content: 'pinduoduo://com.xunmeng.pinduoduo/search_result.html?search_key=' + str
-    },
+    return [
+        {
+            type: 'urlInApp',
+            title: '拼多多搜索',
+            content: 'pinduoduo://com.xunmeng.pinduoduo/search_result.html?search_key=' + str
+        },
         {
             type: 'urlInApp',
             title: '淘宝搜索',
@@ -24,6 +25,11 @@ async function main(str) {
             type: 'urlInApp',
             title: '小红书搜索',
             content: `xhsdiscover://search/result?keyword=${str}`
+        },
+        {
+            type: 'urlInApp',
+            title: '高德地图搜索',
+            content: `iosamap://path?sourceApplication=launch&backScheme=launch:&dname=${str}&dev=0&m=0&t=0`
         },
         {
             type: 'urlInApp',
@@ -54,11 +60,6 @@ async function main(str) {
             type: 'function',
             title: '今日油价',
             content: 'youjia'
-        },
-        {
-            type: 'function',
-            title: 'root目录',
-            content: 'root'
         }
     ];
 

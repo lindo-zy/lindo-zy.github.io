@@ -39,4 +39,7 @@ async function main() {
 
 }
 
+// main().then(r => console.log(r));
+
+
 export default $http;
