@@ -33,7 +33,7 @@ async function main(str) {
         {
             type: 'urlInApp',
             title: '谷歌搜索',
-            content: 'https://www.google.com/search?q=' + str
+            content: 'Alook://https://www.google.com/search?q=' + str
         },
         {
             type: 'urlInApp',
@@ -54,11 +54,22 @@ async function main(str) {
             type: 'function',
             title: '今日油价',
             content: 'youjia'
+        },
+        {
+            type: 'function',
+            title: 'root目录',
+            content: 'root'
         }
     ];
 
 }
 
+
+async function root() {
+    const result = $util.jbpath("/var/mobile");
+    console.log(result);
+    return result;
+}
 
 async function youjia() {
 
